@@ -4,7 +4,13 @@ from ttkthemes import ThemedStyle
 
 from scene1 import Scene1
 
+"""
+TO-DO:
+[x] - Converter valores float possiveis de ser int
+[] - Iniciar a app com foco na caixa de texto
+[] - 
 
+"""
 class Main:
     """Root Master"""
 
@@ -30,6 +36,7 @@ class Main:
 
         self.master.focus_force()
         self.master.mainloop()
+
 
 
 if __name__ == '__main__':

@@ -1,8 +1,12 @@
 from tkinter import *
 from tkinter import ttk
+import regex as re
+import sympy
 
 
 class Scene1:
+    # Caracteristicas gerais
+    btn_width = 4
     def __init__(self, master):
         """Inicializa a cena."""
         self.frame = ttk.Frame(master)
@@ -21,15 +25,16 @@ class Scene1:
         self.textbox['justify'] = RIGHT
         self.textbox.bind('<Return>', lambda e: self.calcula())
         self.textbox.bind('<Down>', lambda e: self.btn_c.focus_force())
+        self.textbox.bind('<BackSpace>', lambda e: self.key_backspace())
         self.textbox.focus_force()
 
         self.btn_shift = ttk.Button(self.frame1)
         self.btn_shift['text'] = 'Shift'
-        self.btn_shift['width'] = 4
+        self.btn_shift['width'] = self.btn_width
         self.btn_shift.bind('<Right>', lambda e: self.btn_ce.focus_force())
         self.btn_shift.bind('<Down>', lambda e: self.btn_7.focus_force())
         self.btn_shift.bind('<Up>', lambda e: self.textbox.focus_force())
-        self.btn_width = 4
+
 
         self.btn_0 = ttk.Button(self.frame1)
         self.btn_0['text'] = '0'
@@ -223,12 +228,13 @@ class Scene1:
         self.btn_sum.grid(row=4, column=3, pady=5)
 
     def event_on_write(self, *args):
+        """
+        Impossibilita escrita de caracteres não númericos a partir do teclado.
+        """
+
         valores = self.valores.get()
 
         if len(valores) > 0:
-            if 'Error' in valores:
-                self.valores.set(valores[5::])
-
             if not valores[-1].isnumeric() \
                     and valores[-1] != '+' \
                     and valores[-1] != '-' \
@@ -255,21 +261,20 @@ class Scene1:
                 self.valores.set(valores[:-1])
 
     def add_number(self, number):
-        if 'Error' in self.valores.get():
-            self.valores.set(self.valores.get()[5::])
-        self.valores.set(self.valores.get()[::] + number)
+        if 'Erro' == self.valores.get():
+            self.valores.set('')
+        self.valores.set(self.valores.get() + number)
+
         self.textbox.icursor(END)
         self.textbox.focus_force()
 
     def add_simbol(self, simbol):
-        if 'Error' in self.valores.get():
-            self.valores.set(self.valores.get()[5::])
         if len(self.valores.get()) > 0:
             if self.valores.get()[-1] not in '/*-+':
-                self.valores.set(self.valores.get()[::] + simbol)
+                self.valores.set(self.valores.get() + simbol)
         else:
             if simbol == '-':
-                self.valores.set(self.valores.get()[::] + simbol)
+                self.valores.set(simbol)
 
         self.textbox.icursor(END)
         self.textbox.focus_force()
@@ -308,7 +313,11 @@ class Scene1:
         self.add_number('.')
 
     def insert_c(self):
-        self.valores.set(self.valores.get()[:-1])
+        if "Erro" == self.valores.get():
+            self.valores.set('')
+        else:
+            self.valores.set(self.valores.get()[:-1])
+
         self.textbox.icursor(END)
         self.textbox.focus_force()
 
@@ -318,27 +327,70 @@ class Scene1:
         self.textbox.focus_force()
 
     def insert_div(self):
-        self.add_simbol('/')
+        floatNull = re.compile(r'(-)*\d+(\.\d+)*')
+        if floatNull.match(self.valores.get()):
+            self.add_simbol('/')
+        else:
+            self.textbox.icursor(END)
+            self.textbox.focus_force()
 
     def insert_x(self):
-        self.add_simbol('*')
+        floatNull = re.compile(r'(-)*\d+(\.\d+)*')
+        if floatNull.match(self.valores.get()):
+            self.add_simbol('*')
+        else:
+            self.textbox.icursor(END)
+            self.textbox.focus_force()
 
     def insert_sub(self):
-        self.add_simbol('-')
+        floatNull = re.compile(r'(-)*\d+(\.\d+)*')
+        if floatNull.match(self.valores.get()) or self.valores.get() == '':
+          self.add_simbol('-')
+        else:
+            self.textbox.icursor(END)
+            self.textbox.focus_force()
 
     def insert_sum(self):
-        self.add_simbol('+')
+        floatNull = re.compile(r'(-)*\d+(\.\d+)*')
+        if floatNull.match(self.valores.get()):
+            self.add_simbol('+')
+        else:
+            self.textbox.icursor(END)
+            self.textbox.focus_force()
 
     def insert_shift(self):
         # Calculadora cientifica
         self.textbox.icursor(END)
         self.textbox.focus_force()
-        ...
+
+
+    def key_backspace(self):
+        if 'Erro' == self.valores.get():
+            self.valores.set('')
+        else:
+            self.textbox.icursor(END)
+            self.textbox.focus_force()
 
     def calcula(self):
-        conta = self.valores.get()
+        floatBeInt = re.compile(r'\d+.0')
+        fractionResult = re.compile(r'\d+/\d+')
+        smallDecimal = re.compile(r'\d+\.\d')
+        if '' == self.valores.get():
+            self.valores.set('')
+
         try:
-            self.valores.set(str(eval(conta)))
+            self.valores.set(sympy.sympify(self.valores.get()))
+
+            if floatBeInt.match(self.valores.get()):
+                self.valores.set(self.valores.get().replace('.0', ''))
+
+            if fractionResult.match(self.valores.get()):
+                if smallDecimal.match(self.valores.get()):
+                    print('ok')
+                    self.valores.set(sympy.Float(self.valores.get()))
+                else:
+                    self.valores.set(round(sympy.Float(self.valores.get()), 3))
+
         except:
             self.valores.set('Error')
 
