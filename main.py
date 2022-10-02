@@ -7,6 +7,7 @@ from scene1 import Scene1
 """
 TO-DO:
 [x] - Converter valores float possiveis de ser int
+[] - Deletar em posicoes personalizadas
 [] - Iniciar a app com foco na caixa de texto
 [] - 
 
