@@ -2,24 +2,17 @@ from tkinter import *
 
 from ttkthemes import ThemedStyle
 
-from scene1 import Scene1
+from window import Scene1
 
-"""
-TO-DO:
-[x] - Converter valores float possiveis de ser int
-[] - Deletar em posicoes personalizadas
-[] - Iniciar a app com foco na caixa de texto
-[] - 
-
-"""
 class Main:
     """Root Master"""
 
     def __init__(self):
         self.master = Tk()
         self.master.title('Calculadora')
+        self.master.configure(bg='#ffffff')
         self.style = ThemedStyle(self.master)
-        self.style.set_theme('radiance')
+        self.style.set_theme('adapta')
 
         # Configuracoes da janela
         self.width = 370
