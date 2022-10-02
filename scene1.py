@@ -10,10 +10,10 @@ class Scene1:
     def __init__(self, master):
         """Inicializa a cena."""
         self.frame = ttk.Frame(master)
-        self.frame.place(x=25, y=20)
+        self.frame.grid(column=0, row=0, pady=25, padx=25)
 
         self.frame1 = ttk.Frame(master)
-        self.frame1.place(x=25, y=90)
+        self.frame1.grid(column=0, row=1, pady=5)
 
         self.valores = StringVar()
         self.valores.trace('w', self.event_on_write)
@@ -316,6 +316,7 @@ class Scene1:
         if "Erro" == self.valores.get():
             self.valores.set('')
         else:
+
             self.valores.set(self.valores.get()[:-1])
 
         self.textbox.icursor(END)
@@ -372,27 +373,31 @@ class Scene1:
             self.textbox.focus_force()
 
     def calcula(self):
-        floatBeInt = re.compile(r'\d+.0')
-        fractionResult = re.compile(r'\d+/\d+')
-        smallDecimal = re.compile(r'\d+\.\d')
-        if '' == self.valores.get():
-            self.valores.set('')
+        floatBeInt = re.compile(r'\d+.0*')
+        fractionResult = re.compile(r'(-)*\d+/(-)*\d+')
+        smallDecimal = re.compile(r'(-)*\d+\.\d+')
+        largeDecimal = re.compile(r'\d+\.\d\d\d')
 
         try:
             self.valores.set(sympy.sympify(self.valores.get()))
+            print(self.valores.get())
 
-            if floatBeInt.match(self.valores.get()):
-                self.valores.set(self.valores.get().replace('.0', ''))
+            if smallDecimal.match(self.valores.get()):
+                self.valores.set(float(self.valores.get()))
 
             if fractionResult.match(self.valores.get()):
+                self.valores.set(sympy.Float(self.valores.get()))
+
                 if smallDecimal.match(self.valores.get()):
-                    print('ok')
-                    self.valores.set(sympy.Float(self.valores.get()))
+                    self.valores.set(float(self.valores.get()))
                 else:
                     self.valores.set(round(sympy.Float(self.valores.get()), 3))
 
         except:
-            self.valores.set('Error')
+            if '' == self.valores.get():
+                self.valores.set('')
+            else:
+                self.valores.set('Error')
 
         self.textbox.icursor(END)
         self.textbox.focus_force()
