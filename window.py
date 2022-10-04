@@ -7,6 +7,7 @@ import sympy
 class Scene1:
     # Caracteristicas gerais
     btn_width = 4
+
     def __init__(self, master):
         """Inicializa a cena."""
         self.frame = ttk.Frame(master)
@@ -34,7 +35,6 @@ class Scene1:
         self.btn_shift.bind('<Right>', lambda e: self.btn_ce.focus_force())
         self.btn_shift.bind('<Down>', lambda e: self.btn_7.focus_force())
         self.btn_shift.bind('<Up>', lambda e: self.textbox.focus_force())
-
 
         self.btn_0 = ttk.Button(self.frame1)
         self.btn_0['text'] = '0'
@@ -199,6 +199,7 @@ class Scene1:
         self.btn_c.bind('<Up>', lambda e: self.textbox.focus_force())
 
         self.draw_widgets()
+        self.textbox.focus_force()
 
     def draw_widgets(self):
         self.textbox.grid()
@@ -346,7 +347,7 @@ class Scene1:
     def insert_sub(self):
         floatNull = re.compile(r'(-)*\d+(\.\d+)*')
         if floatNull.match(self.valores.get()) or self.valores.get() == '':
-          self.add_simbol('-')
+            self.add_simbol('-')
         else:
             self.textbox.icursor(END)
             self.textbox.focus_force()
@@ -364,7 +365,6 @@ class Scene1:
         self.textbox.icursor(END)
         self.textbox.focus_force()
 
-
     def key_backspace(self):
         if 'Erro' == self.valores.get():
             self.valores.set('')
@@ -373,15 +373,15 @@ class Scene1:
             self.textbox.focus_force()
 
     def calcula(self):
-        floatBeInt = re.compile(r'\d+.0*')
         fractionResult = re.compile(r'(-)*\d+/(-)*\d+')
         smallDecimal = re.compile(r'(-)*\d+\.\d+')
-        largeDecimal = re.compile(r'\d+\.\d\d\d')
+        zeroDivisor = re.compile(r'(-)*(\d)+(\.)*(\d)*/(-)*0')
 
         try:
+            if zeroDivisor.match(self.valores.get()):
+                self.valores.set('Error')
+                raise
             self.valores.set(sympy.sympify(self.valores.get()))
-            print(self.valores.get())
-
             if smallDecimal.match(self.valores.get()):
                 self.valores.set(float(self.valores.get()))
 
@@ -394,10 +394,11 @@ class Scene1:
                     self.valores.set(round(sympy.Float(self.valores.get()), 3))
 
         except:
-            if '' == self.valores.get():
-                self.valores.set('')
-            else:
+            if len(self.valores.get()) > 0:
                 self.valores.set('Error')
+
+        if 'Err' == self.valores.get():
+            self.valores.set('')
 
         self.textbox.icursor(END)
         self.textbox.focus_force()
