@@ -10,7 +10,7 @@ class Main:
     def __init__(self):
         self.master = Tk()
         self.master.title('Calculadora')
-        self.master.configure(bg='#ffffff')
+        self.master.configure(bg='#FAFBFC')
         self.style = ThemedStyle(self.master)
         self.style.set_theme('adapta')
 
