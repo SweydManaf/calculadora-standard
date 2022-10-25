@@ -12,7 +12,7 @@ class Main:
         self.master.title('Calculadora')
         self.master.configure(bg='#FAFBFC')
         self.style = ThemedStyle(self.master)
-        self.style.set_theme('radiance')
+        self.style.set_theme('adapta')
 
         # Configuracoes da janela
         self.width = 370
