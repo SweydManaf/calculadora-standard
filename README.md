@@ -40,7 +40,7 @@ python main.py
 
 Obrigado às seguintes pessoas que contribuíram para este projeto:
 
-* [@sweydabdul] (https://github.com/sweydabdul) 📖
+* [@sweydmanaf](https://github.com/sweydmanaf) 📖
 
 
 
