@@ -24,12 +24,12 @@ Para iniciar, siga estas etapas no diretório raiz:
 
 Linux e macOS:
 ```
-python3 main.py
+python3 main.pyw
 ```
 
 Windows:
 ```
-python main.py
+python main.pyw
 ```
 ## Exemplo
 
